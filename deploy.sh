@@ -4,7 +4,7 @@ set -x
 PATH=$PATH:/usr/local/bin; export PATH
 REGION=us-west-1
 REPOSITORY_NAME=springboot-ecr
-CLUSTER=springboot-cluster
+CLUSTER=springboot-cluster1
 FAMILY=`sed -n 's/.*"family": "\(.*\)",/\1/p' aws-task-latest.json`
 NAME=`sed -n 's/.*"name": "\(.*\)",/\1/p' aws-task-latest.json`
 SERVICE_NAME=${NAME}-service
