@@ -1,0 +1,16 @@
+---
+- hosts: dockerinstance
+  remote_user: root
+  tasks:
+  - name: Install pip
+    yum:
+      name: python3-pip
+      state: present
+  - name: Install docker
+    yum:
+      name: docker
+      state: present
+  - name: Ensure docker deamon is running
+    service:
+      name: docker
+      state: started

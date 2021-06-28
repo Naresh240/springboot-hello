@@ -1,0 +1,40 @@
+pipeline {
+    agent any
+	environment {
+		registry = 'naresh240/springboothello:latest'
+		registryCredentials = 'docker_credentials'
+		dockerImage = ''
+	}
+    stages {
+        stage ('SCM') {
+            steps {
+                checkout([$class: 'GitSCM', 
+                	branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, 
+                	extensions: [], 
+                	submoduleCfg: [], 
+                	userRemoteConfigs: [[url: 'https://github.com/Naresh240/spring-boot-hello.git']]])
+            }
+        }
+        stage ('Build Artifact') {
+            steps {
+                sh 'mvn clean install'
+            }
+        }
+        stage ('Build Docker Image') {
+            steps {
+                script {
+                    dockerImage = docker.build registry
+                }
+            }
+        }
+        stage ('Docker Push') {
+            steps {
+                script {
+                    docker.withRegistry('',registryCredentials) {
+                        dockerImage.push()
+                    }
+                }
+            }
+        }
+    }
+}

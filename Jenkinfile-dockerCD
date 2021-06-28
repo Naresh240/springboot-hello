@@ -1,0 +1,29 @@
+pipeline{
+    agent any
+    parameters {
+        choice(name: 'action', choices: 'Create\nRemove', description: 'Create/Remove ApplicationContainer')
+    }
+    stages{
+        stage("SCM"){
+            steps{
+                git 'https://github.com/Naresh240/springboohello-CICD.git'
+            }
+        }           
+        stage("docker deploy") {
+            when {
+				expression { params.action == 'Create' }
+			}
+	        steps {
+               sh "sudo ansible-playbook docker-deploy.yml --tags create --extra-vars ImageTag=${ImageTag} -e 'ansible_python_interpreter=/usr/bin/python3'"
+           }
+        }
+        stage("stop & remove container") {
+            when {
+				expression { params.action == 'Remove' }
+			}
+	        steps {
+                sh "sudo ansible-playbook docker-deploy.yml --tags remove --extra-vars ImageTag=${ImageTag} -e 'ansible_python_interpreter=/usr/bin/python3'"
+           }            
+        }
+    }
+}

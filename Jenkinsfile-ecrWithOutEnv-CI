@@ -1,0 +1,35 @@
+pipeline {
+    agent any
+    stages {
+        stage ('SCM') {
+            steps {
+                checkout([$class: 'GitSCM', 
+                	branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, 
+                	extensions: [], 
+                	submoduleCfg: [], 
+                	userRemoteConfigs: [[url: 'https://github.com/Naresh240/spring-boot-hello.git']]])
+            }
+        }
+        stage ('Build Artifact') {
+            steps {
+                sh 'mvn clean install'
+            }
+        }
+        stage ('Build Docker Image') {
+            steps {
+                script {
+                    docker.build('springboot-ecr')
+                }
+            }
+        }
+        stage ('Docker Push') {
+            steps {
+                script {
+						docker.withRegistry('https://653308993752.dkr.ecr.us-east-1.amazonaws.com','ecr:us-east-1:ecr_user_credentials') {
+                        docker.image('springboot-ecr').push('latest')
+                    }
+                }
+            }
+        }
+    }
+}
