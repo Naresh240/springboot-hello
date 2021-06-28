@@ -1,0 +1,73 @@
+pipeline{
+    agent any
+    parameters {
+	    choice(name: 'action', choices: 'create\nrollback\ncleanup', description: 'create/rollingback/cleanup of the deployment')
+	    string(name: 'ImageTag', description: "Name of the docker build")
+    }
+    stages {
+        stage('git checkout'){
+            when {
+			    expression { params.action == 'create' }
+		    }
+            steps{
+                git 'https://github.com/Naresh240/spring-boot-hello.git'
+            }
+        }
+        stage('Build CI Job'){
+            when {
+			    expression { params.action == 'create' }
+		    }
+            steps{
+                build job: 'spring-boot-hello-CI', 
+                parameters: [string(name: 'ImageTag', value: String.valueOf(ImageTag))]
+            }
+        }
+        stage('Deployment'){
+            when {
+				expression { params.action == 'create' }
+			}
+            steps{
+                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'AWS_Credentials', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
+                    withCredentials([kubeconfigFile(credentialsId: 'kubernetes_credentials', variable: 'KUBECONFIG')]) {
+                    sh """
+                    cat deployement.yml | sed "s/{{ImageTag}}/${ImageTag}/g" | kubectl apply -f -
+                    kubectl apply -f loadbalancer-service.yml
+                    kubectl apply -f nodeport-service.yml
+                    """
+	               }
+	           }
+            }
+        }
+		stage('Rollback'){
+            when {
+				expression { params.action == 'rollback' }
+			}
+            steps{
+                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'AWS_Credentials', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
+                    withCredentials([kubeconfigFile(credentialsId: 'kubernetes_credentials', variable: 'KUBECONFIG')]) {
+                    sh """
+                    cat deployement.yml | sed "s/{{ImageTag}}/${ImageTag}/g" | kubectl apply -f -
+                    kubectl apply -f loadbalancer-service.yml
+                    kubectl apply -f nodeport-service.yml
+                    """
+	               }
+	           }
+            }
+        }
+        stage('cleanup'){
+            when {
+				expression { params.action == 'cleanup' }
+			}
+            steps{
+                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'AWS_Credentials', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
+                    withCredentials([kubeconfigFile(credentialsId: 'kubernetes_credentials', variable: 'KUBECONFIG')]) {
+                    sh """
+                    kubectl delete svc spring-boot-hello-loadbalancer spring-boot-hello-nodeport
+                    kubectl delete deployments spring-boot-hello
+                    """
+	               }
+	           }
+            }
+        }
+    }
+}
