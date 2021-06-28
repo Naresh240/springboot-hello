@@ -1,4 +1,5 @@
 FROM maven as build
+MAINTAINER Naresh Babu Kamani
 WORKDIR /app
 COPY . .
 RUN mvn install 
