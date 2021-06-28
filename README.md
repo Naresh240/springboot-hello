@@ -4,8 +4,6 @@
   - Install Java
   - Install GIT
   - Install Maven
-  - Install Docker
-  - EKS Cluster setup
   
 # Clone code from github:
     git clone https://github.com/Naresh240/springboot-hello.git
