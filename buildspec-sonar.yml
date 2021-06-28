@@ -1,0 +1,28 @@
+version: 0.2
+env:
+  secrets-manager:
+    LOGIN: prod/sonar:sonartoken
+    HOST: prod/sonar:HOST
+    Project: prod/sonar:projectname
+phases:
+  install:
+    runtime-versions:
+      java: corretto11
+  pre_build:
+    commands:
+      - yum install -y jq
+      - wget https://downloads.apache.org/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz
+      - tar xzf apache-maven-3.6.3-bin.tar.gz
+      - export PATH=$PATH:/apache-maven-3.6.3/bin
+  build:
+    commands:
+      - mvn clean install  
+      - mvn sonar:sonar -Dsonar.host.url=$HOST -Dsonar.login=$LOGIN -Dsonar.projectKey=$Project -Dsonar.sources=src
+      - sleep 5
+      - curl $HOST/api/qualitygates/project_status?projectKey=$Project >result.json
+      - cat result.json
+#       - if [ $(cat "result.json" | jq -r '.projectStatus.status') = "ERROR" ] ; then $CODEBUILD_BUILD_SUCCEEDING -eq 0 ;fi
+artifacts:
+  files:
+    - '**/*'
+  discard-paths: yes
