@@ -1,0 +1,18 @@
+{
+    "family": "aws-task-latest",
+    "containerDefinitions": [
+        {
+            "image": "653308993752.dkr.ecr.us-west-1.amazonaws.com/springboot-ecr:latest",
+            "name": "aws-task-latest",
+            "cpu": 10,
+            "memory": 256,
+            "essential": true,
+            "portMappings": [
+                {
+					"containerPort": 8080,
+                    "hostPort": 8080
+                }
+            ]
+        }
+    ]
+}
