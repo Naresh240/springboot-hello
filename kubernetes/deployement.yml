@@ -17,6 +17,6 @@ spec:
     spec:
       containers:
       - name: springboot-hello
-        image: naresh240/springboothello:{{ImageTag}}
+        image: naresh240/springboothello:{{ ImageTag }}
         ports:
         - containerPort: 8080
