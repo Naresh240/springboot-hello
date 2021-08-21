@@ -3,7 +3,6 @@
   tasks:
   - name: "deploy application in kubernetes"
     k8s:
-      kubeconfig: "{{ kube_config }}"
       namespace: "default"
       state: "present"
       src: "kubernetes/deployement.yml"
