@@ -11,7 +11,6 @@ pool: "aws"
 
 steps:
 - script: echo "Hello, world!"
-container:
 - task: Maven@3
   inputs:
     mavenPomFile: 'pom.xml'
