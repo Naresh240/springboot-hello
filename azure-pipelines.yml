@@ -26,6 +26,6 @@ steps:
 - task: Docker@2
   inputs:
     containerRegistry: 'dockerhub'
-    repository: 'springboothello-azure'
+    repository: 'naresh240/springboot-azure'
     command: 'buildAndPush'
     Dockerfile: '**/Dockerfile'
