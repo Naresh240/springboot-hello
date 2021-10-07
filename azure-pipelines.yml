@@ -11,6 +11,7 @@ pool: "aws"
 
 steps:
 - script: echo "Hello, world!"
+- script: sudo usermod -a -G docker
 - task: Maven@3
   inputs:
     mavenPomFile: 'pom.xml'
