@@ -6,7 +6,7 @@
 trigger:
 - main
 
-pool: "Azure Pipelines"
+pool: "aws"
 
 steps:
 - script: echo Hello, world!
