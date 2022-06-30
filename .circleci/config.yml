@@ -6,9 +6,9 @@ jobs:
       - image: circleci/openjdk:16.0.1-jdk-buster
     steps:
       - run:
-        command: |
-          mvn clean package
-          mkdir ~/artifacts;
-          echo "./target/*.jar" > ~/artifacts/springboot.jar;
+          command: |
+            mvn clean package
+            mkdir ~/artifacts;
+            echo "./target/*.jar" > ~/artifacts/springboot.jar;
       - store_artifacts:
           path: ~/artifacts/springboot.jar
