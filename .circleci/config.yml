@@ -8,9 +8,9 @@ jobs:
       - checkout
       - run:
           command: |
-          mvn clean install;	  
-          mkdir ~/artifacts;
-          echo "./target/gs-spring-boot-0.1.0.jar" > ~/artifacts/springboot.jar;
+            mvn clean install;	  
+            mkdir ~/artifacts;
+            echo "./target/gs-spring-boot-0.1.0.jar" > ~/artifacts/springboot.jar;
       - store_artifacts:
           path: ~/artifacts/springboot.jar
 workflows:
