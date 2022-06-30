@@ -5,11 +5,10 @@ jobs:
     docker:
       - image: circleci/openjdk:16.0.1-jdk-buster
     working_directory: /tmp
-    steps:   
-      # package into a jar
-      - run: mvn clean package
+    steps:
       - run:
         command: |
+          mvn clean package
           mkdir /tmp/artifacts;
           echo "./target/*.jar" > /tmp/artifacts/springboot.jar;
       - store_artifacts:
