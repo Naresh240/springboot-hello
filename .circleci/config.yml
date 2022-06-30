@@ -17,7 +17,7 @@ commands:
     steps:
       - checkout
       - restore_cache_cmd
-      - run: mvn clean package
+      - run: mvn clean install
 executors:
   docker-executor:
     docker:
