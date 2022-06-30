@@ -7,17 +7,22 @@ commands:
           keys:
           - v1-dependencies-{{ checksum "pom.xml" }}
           - v1-dependencies-
-  save_cache:
+  save_cache_cmd:
     steps:  
       - save_cache:
           paths:
             - ~/.m2
           key: v1-dependencies-{{ checksum "pom.xml" }}
+   store_artifacts_cmd:
+     steps:
+        - store_artifacts: # store the uberjar as an artifact
+            path: target/passedon.war
   build:
     steps:
       - checkout
       - restore_cache_cmd
       - run: mvn clean install
+      - store_artifacts_cmd
 executors:
   docker-executor:
     docker:
