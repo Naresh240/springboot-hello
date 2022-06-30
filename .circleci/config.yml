@@ -15,8 +15,10 @@ jobs:
     - store_artifacts:
         path: /tmp/artifacts/springboot.jar
 workflows:
-  maven_test:
+  maven_build_push:
     jobs:
-      - maven/test:
+      - maven_build:
           command: 'clean install'
       - push_artifact
+          requires:
+          - maven_build
