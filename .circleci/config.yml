@@ -4,13 +4,13 @@ jobs:
   build:
     docker:
       - image: circleci/openjdk:16.0.1-jdk-buster
-    working_directory: ~/helloworld
-    steps:
-      # git pull
-      - checkout      
+    working_directory: /tmp
+    steps:   
       # package into a jar
       - run: mvn clean package
-      # store raw contents of src code
+      - run:
+        command: |
+          mkdir /tmp/artifacts;
+          echo "./target/*.jar" > /tmp/artifacts/springboot.jar;
       - store_artifacts:
-          path: target/*.jar
-          destination: helloworld
+          path: /tmp/artifacts/springboot.jar
