@@ -5,6 +5,7 @@ jobs:
     docker:
       - image: circleci/openjdk:16.0.1-jdk-buster
     steps:
+      - checkout
       - run:
           command: |
             mvn clean package;
