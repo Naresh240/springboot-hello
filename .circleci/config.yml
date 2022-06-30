@@ -6,4 +6,4 @@ workflows:
   maven_test:
     jobs:
       - maven/test:
-          command: 'mvn clean install'
+          command: 'clean install'
