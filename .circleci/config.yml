@@ -1,20 +1,33 @@
 version: 2.1
 
-jobs:
-  maven_build:
-    docker:
-      - image: circleci/openjdk:8-jdk
+commands:
+  restore_cache_cmd:
+    steps:
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "pom.xml" }}
+          - v1-dependencies-
+  save_cache:
+    steps:  
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: v1-dependencies-{{ checksum "pom.xml" }}
+  build:
     steps:
       - checkout
-      - run:
-          command: |
-            mvn clean install;	  
-            mkdir ~/artifacts;
-            echo "./target/gs-spring-boot-0.1.0.jar" > ~/artifacts/springboot.jar;
-      - store_artifacts:
-          path: ~/artifacts/springboot.jar
+      - restore_cache_cmd
+      - run: mvn clean package
+executors:
+  docker-executor:
+    docker:
+      - image: circleci/openjdk:8-jdk
+jobs:
+  build_artifact:
+    executor: docker-executor
+    steps:
+      - build
 workflows:
-  version: 2
-  maven_build_push:
+  build_artifact:
     jobs:
-      - maven_build
+      - build_artifact
