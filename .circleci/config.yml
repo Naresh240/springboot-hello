@@ -1,15 +1,21 @@
-version: 2
+version: 2.1
 
 jobs:
-  build:
+  maven_build:
     docker:
-      - image: circleci/openjdk:16.0.1-jdk-buster
+      - image: circleci/openjdk:8-jdk
     steps:
       - checkout
       - run:
+          mvn clean install	  
+      - run:
           command: |
-            mvn clean package;
             mkdir ~/artifacts;
             echo "./target/*.jar" > ~/artifacts/springboot.jar;
       - store_artifacts:
-          path: ~/artifacts/springboot.jar
+          path: artifacts/springboot.jar
+workflows:
+  version: 2
+  maven_build_push:
+    jobs:
+      - maven_build
