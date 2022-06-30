@@ -1,24 +1,16 @@
-version: 2.1  
-orbs:
-  maven: circleci/maven@1.3.0
+version: 2
 
 jobs:
-  push_artifact:
-    docker: 
-      - image: circleci/node:4.8.2
-    working_directory: /tmp
+  build:
+    docker:
+      - image: circleci/openjdk:16.0.1-jdk-buster
+    working_directory: ~/helloworld
     steps:
-    - run:
-        command: |
-          mkdir /tmp/artifacts;
-          echo "./target/*.jar" > /tmp/artifacts/springboot.jar;
-    - store_artifacts:
-        path: /tmp/artifacts/springboot.jar
-workflows:
-  maven_build_push:
-    jobs:
-      - maven_build:
-          command: 'clean install'
-      - push_artifact
-          requires:
-          - maven_build
+      # git pull
+      - checkout      
+      # package into a jar
+      - run: mvn clean package
+      # store raw contents of src code
+      - store_artifacts:
+          path: target/*.jar
+          destination: helloworld
