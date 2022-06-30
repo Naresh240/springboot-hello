@@ -11,7 +11,7 @@ jobs:
       - run:
           command: |
             mkdir ~/artifacts;
-            echo "./target/*.jar" > ~/artifacts/springboot.jar;
+            echo "./target/gs-spring-boot-0.1.0.jar" > ~/artifacts/springboot.jar;
       - store_artifacts:
           path: artifacts/springboot.jar
 workflows:
