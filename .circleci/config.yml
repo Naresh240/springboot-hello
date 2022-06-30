@@ -13,10 +13,10 @@ commands:
           paths:
             - ~/.m2
           key: v1-dependencies-{{ checksum "pom.xml" }}
-   store_artifacts_cmd:
-     steps:
-        - store_artifacts: # store the uberjar as an artifact
-            path: target/gs-spring-boot-0.1.0.jar
+  store_artifacts_cmd:
+    steps:
+      - store_artifacts: # store the uberjar as an artifact
+          path: target/gs-spring-boot-0.1.0.jar
   build:
     steps:
       - checkout
