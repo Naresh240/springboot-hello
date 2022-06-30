@@ -16,12 +16,15 @@ commands:
    store_artifacts_cmd:
      steps:
         - store_artifacts: # store the uberjar as an artifact
-            path: target/passedon.war
+            path: target/gs-spring-boot-0.1.0.jar
   build:
     steps:
       - checkout
       - restore_cache_cmd
-      - run: mvn clean install
+      - run: 
+          command: |
+            mvn clean install;
+            ls -l;
       - store_artifacts_cmd
 executors:
   docker-executor:
