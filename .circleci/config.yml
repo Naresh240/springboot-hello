@@ -1,9 +1,23 @@
 version: 2.1	  
 orbs:
   maven: circleci/maven@1.3.0
-
+  
+jobs:
+maven_build:
+  steps:
+  - maven:
+      name: Build Artifacts
+      command: 'clean install'
+  - create_artifact_directory:
+      name: Creating artifact directory
+      command: |
+        mkdir /tmp/artifacts;
+        echo "./target/*.jar" > /tmp/artifacts/springboot.jar;
+  - store_artifacts:
+      path: /tmp/artifacts/springboot.jar
 workflows:
-  maven_test:
+  maven_build_push:
     jobs:
-      - maven/test:
-          command: 'clean install'
+      - maven
+      - create_artifact_directory
+      - store_artifacts
