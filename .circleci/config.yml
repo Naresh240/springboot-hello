@@ -16,8 +16,7 @@ commands:
   store_artifacts_cmd:
     steps:
       - store_artifacts: # store the uberjar as an artifact
-          path: target/*.jar
-          destination: springboot.jar
+          path: target/gs-spring-boot-0.1.0.jar
   build:
     steps:
       - checkout
