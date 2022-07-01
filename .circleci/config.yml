@@ -16,32 +16,7 @@ commands:
   store_artifacts_cmd:
     steps:
       - store_artifacts: # store the uberjar as an artifact
-          path: target/gs-spring-boot-0.1.0.jar
-  docker_image_build_cache_cmd:
-    steps:  
-	  - restore_cache:
-          keys:
-            - v1-{{ .Branch }}
-          paths:
-            - /caches/app.tar
-      - run:
-          name: Load Docker image layer cache
-          command: |
-            set +o pipefail
-            docker load -i /caches/app.tar | true
-      - run:
-          name: Build application Docker image
-          command: |
-            docker build --cache-from=app -t app .
-      - run:
-          name: Save Docker image layer cache
-          command: |
-            mkdir -p /caches
-            docker save -o /caches/app.tar app
-      - save_cache:
-          key: v1-{{ .Branch }}-{{ epoch }}
-          paths:
-            - /caches/app.tar          
+          path: target/gs-spring-boot-0.1.0.jar         
   build:
     steps:
       - checkout
@@ -51,7 +26,9 @@ commands:
             mvn clean install;
             ls -l;
       - store_artifacts_cmd
-      - docker_image_build_cache_cmd
+      - run:
+          name: Build Docker image
+          command: docker build -t springboot:latest .
 executors:
   docker-executor:
     docker:
