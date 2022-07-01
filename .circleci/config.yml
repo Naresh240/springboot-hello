@@ -31,19 +31,21 @@ commands:
           paths:
             - gs-spring-boot-0.1.0.jar
 executors:
-  docker-executor:
+  java-executor:
     docker:
       - image: circleci/openjdk:8-jdk
+  docker-executor:
+    docker:
+      - image: circleci/buildpack-deps:stretch      
 jobs:
   build_artifact:
-    executor: docker-executor
+    executor: java-executor
     steps:
       - build
-  build_docker_image:
+  build_and_publish_docker_image:
     environment:
       IMAGE_NAME: naresh240/springboot
-    docker:
-      - image: circleci/buildpack-deps:stretch
+    executor: docker-executor
     steps:
       - checkout
       - attach_workspace:
@@ -51,27 +53,15 @@ jobs:
       - setup_remote_docker
       - run:
           name: Build Docker image
-          command: docker build -t $IMAGE_NAME:latest .
-  publish_docker_image:
-    environment:
-      IMAGE_NAME: naresh240/springboot
-    docker:
-      - image: circleci/buildpack-deps:stretch
-    steps:
-      - setup_remote_docker
-      - run:
-          name: Publish Docker Image to Docker Hub
           command: |
+            docker build -t $IMAGE_NAME:latest .
             echo "$DOCKERHUB_PASS" | docker login -u naresh240 --password-stdin
             docker push $IMAGE_NAME:latest		  
 workflows:
   build_artifact:
     jobs:
       - build_artifact
-      - build_docker_image:
-          requires:
-            - build_artifact
-      - publish_docker_image:
+      - build_and_publish_docker_image:
           context: Docker_Password
           requires:
-            - build_docker_image
+            - build_artifact
