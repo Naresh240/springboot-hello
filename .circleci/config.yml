@@ -72,5 +72,6 @@ workflows:
           requires:
             - build_artifact
       - publish_docker_image:
+          context: Docker_Password
           requires:
             - build_docker_image
