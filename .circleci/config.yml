@@ -38,7 +38,21 @@ jobs:
     executor: docker-executor
     steps:
       - build
+  build_docker_image:
+    environment:
+      IMAGE_NAME: naresh240/springboot
+    docker:
+      - image: circleci/buildpack-deps:stretch
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Build Docker image
+          command: docker build -t $IMAGE_NAME:latest .  
 workflows:
   build_artifact:
     jobs:
       - build_artifact
+      - build_docker_image:
+          requires:
+            - build_artifact
