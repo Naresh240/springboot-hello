@@ -16,7 +16,7 @@ commands:
   store_artifacts_cmd:
     steps:
       - store_artifacts: # store the uberjar as an artifact
-          path: target/gs-spring-boot-0.1.0.jar         
+          path: target/gs-spring-boot-0.1.0.jar		  
   build:
     steps:
       - checkout
@@ -26,6 +26,10 @@ commands:
             mvn clean install;
             ls -l;
       - store_artifacts_cmd
+      - persist_to_workspace:
+          root: target
+          paths:
+            - gs-spring-boot-0.1.0.jar
 executors:
   docker-executor:
     docker:
@@ -42,14 +46,16 @@ jobs:
       - image: circleci/buildpack-deps:stretch
     steps:
       - checkout
+      - attach_workspace:
+          at: target	  
       - setup_remote_docker
       - run:
           name: Build Docker image
-          command: docker build -t $IMAGE_NAME:latest .  
+          command: docker build -t $IMAGE_NAME:latest .	  
 workflows:
   build_artifact:
     jobs:
       - build_artifact
-      - build_docker_image:
+      - build_docker_image
           requires:
-            - build_artifact
+            - build
