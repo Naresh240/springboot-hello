@@ -52,6 +52,18 @@ jobs:
       - run:
           name: Build Docker image
           command: docker build -t $IMAGE_NAME:latest .
+  publish_docker_image:
+    environment:
+      IMAGE_NAME: naresh240/springboot
+    docker:
+      - image: circleci/buildpack-deps:stretch
+    steps:
+      - setup_remote_docker
+      - run:
+          name: Publish Docker Image to Docker Hub
+          command: |
+            echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+            docker push $IMAGE_NAME:latest		  
 workflows:
   build_artifact:
     jobs:
@@ -59,3 +71,4 @@ workflows:
       - build_docker_image:
           requires:
             - build_artifact
+      - publish_docker_image
