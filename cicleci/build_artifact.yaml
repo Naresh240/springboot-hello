@@ -1,0 +1,42 @@
+---
+version: 2.1
+
+commands:
+  restore_cache_cmd:
+    steps:
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "pom.xml" }}
+          - v1-dependencies-
+  save_cache_cmd:
+    steps:  
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: v1-dependencies-{{ checksum "pom.xml" }}
+  store_artifacts_cmd:
+    steps:
+      - store_artifacts: # store the uberjar as an artifact
+          path: target/gs-spring-boot-0.1.0.jar
+  build:
+    steps:
+      - checkout
+      - restore_cache_cmd
+      - run: 
+          command: |
+            mvn clean install;
+            ls -l;
+      - store_artifacts_cmd
+executors:
+  docker-executor:
+    docker:
+      - image: circleci/openjdk:8-jdk
+jobs:
+  build_artifact:
+    executor: docker-executor
+    steps:
+      - build
+workflows:
+  build_artifact:
+    jobs:
+      - build_artifact
