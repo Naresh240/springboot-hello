@@ -62,7 +62,7 @@ jobs:
       - run:
           name: Publish Docker Image to Docker Hub
           command: |
-            docker login -u naresh240 -p $Dockerhub_Password
+            echo "$Dockerhub_Password" | docker login -u naresh240 --password-stdin
             docker push $IMAGE_NAME:latest		  
 workflows:
   build_artifact:
@@ -73,4 +73,4 @@ workflows:
             - build_artifact
       - publish_docker_image:
           requires:
-            - build_docker_image
+            - build_artifact
