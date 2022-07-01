@@ -71,6 +71,6 @@ workflows:
       - build_docker_image:
           requires:
             - build_artifact
-      - publish_docker_image
+      - publish_docker_image:
           requires:
             - build_docker_image
