@@ -1,0 +1,67 @@
+version: 2.1
+
+commands:
+  restore_cache_cmd:
+    steps:
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "pom.xml" }}
+          - v1-dependencies-
+  save_cache_cmd:
+    steps:  
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: v1-dependencies-{{ checksum "pom.xml" }}
+  store_artifacts_cmd:
+    steps:
+      - store_artifacts: # store the uberjar as an artifact
+          path: target/gs-spring-boot-0.1.0.jar  
+  build:
+    steps:
+      - checkout
+      - restore_cache_cmd
+      - run: 
+          command: |
+            mvn clean install;
+            ls -l;
+      - store_artifacts_cmd
+      - persist_to_workspace:
+          root: target
+          paths:
+            - gs-spring-boot-0.1.0.jar
+executors:
+  java-executor:
+    docker:
+      - image: circleci/openjdk:8-jdk
+  docker-executor:
+    docker:
+      - image: circleci/buildpack-deps:stretch      
+jobs:
+  build_artifact:
+    executor: java-executor
+    steps:
+      - build
+  build_and_publish_docker_image:
+    environment:
+      IMAGE_NAME: naresh240/springboot
+    executor: docker-executor
+    steps:
+      - checkout
+      - attach_workspace:
+          at: target
+      - setup_remote_docker
+      - run:
+          name: Build Docker image
+          command: |
+            docker build -t $IMAGE_NAME:latest .
+            echo "$DOCKERHUB_PASS" | docker login -u naresh240 --password-stdin
+            docker push $IMAGE_NAME:latest		  
+workflows:
+  build_artifact:
+    jobs:
+      - build_artifact
+      - build_and_publish_docker_image:
+          context: Docker_Password
+          requires:
+            - build_artifact
