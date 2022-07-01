@@ -26,9 +26,6 @@ commands:
             mvn clean install;
             ls -l;
       - store_artifacts_cmd
-      - run:
-          name: Build Docker image
-          command: docker build -t springboot:latest .
 executors:
   docker-executor:
     docker:
