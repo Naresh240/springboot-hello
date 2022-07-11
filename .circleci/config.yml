@@ -32,7 +32,7 @@ commands:
       - run:
           name: push image
           command: |
-            eval $(aws ecr get-login --region $AWS_DEFAULT_REGION --no-include-email)
+            eval $(aws ecr get-login --region us-east-1 --no-include-email)
             docker tag springboothello:latest 179746471541.dkr.ecr.us-east-1.amazonaws.com/springboothello:latest
             docker push 179746471541.dkr.ecr.us-east-1.amazonaws.com/springboothello:latest    
 executors:
