@@ -60,5 +60,6 @@ workflows:
     jobs:
       - build_artifact
       - build_and_publish_docker_image:
+          context: Docker_Password      
           requires:
             - build_artifact
