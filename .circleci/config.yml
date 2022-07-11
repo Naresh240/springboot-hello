@@ -19,9 +19,11 @@ commands:
             - gs-spring-boot-0.1.0.jar
   build_push_to_ecr_cmd:
     steps:
-      - checkout	
+      - checkout      
       - run:
           command: |
+            apk add py-pip
+            pip install awscli          
             aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 179746471541.dkr.ecr.us-east-1.amazonaws.com
             docker build -t springboothello .
             docker tag springboothello:latest 179746471541.dkr.ecr.us-east-1.amazonaws.com/springboothello:latest
