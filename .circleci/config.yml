@@ -28,13 +28,13 @@ commands:
       - run:
           name: Build image
           command: |          
-            docker build -t springboothello .
+            docker build -t ${ECR_REPO_NAME}:${IMAGE_TAG} .
       - run:
           name: push image
           command: |
-            eval $(aws ecr get-login --region us-east-1 --no-include-email)
-            docker tag springboothello:latest 179746471541.dkr.ecr.us-east-1.amazonaws.com/springboothello:latest
-            docker push 179746471541.dkr.ecr.us-east-1.amazonaws.com/springboothello:latest    
+            eval $(aws ecr get-login --region ${AWS_DEFAULT_REGION} --no-include-email)
+            docker tag springboothello:latest ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${ECR_REPO_NAME}:${IMAGE_TAG}
+            docker push ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${ECR_REPO_NAME}:${IMAGE_TAG}  
 executors:
   java-executor:
     docker:
@@ -60,6 +60,6 @@ workflows:
     jobs:
       - build_artifact
       - build_and_publish_docker_image:
-          context: Docker_Password      
+          context: aws_ecr_login      
           requires:
             - build_artifact
