@@ -1,5 +1,4 @@
 # spring-boot-hello..!!!
-### welcome
 
 ## Pre-requisites:
 
