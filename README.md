@@ -1,7 +1,5 @@
 # spring-boot-hello..!!!
 
-## Welcome
-
 ## Pre-requisites:
 
 ```bash
